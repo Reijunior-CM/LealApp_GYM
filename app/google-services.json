@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "469993633816",
+    "project_id": "lealapp-be67a",
+    "storage_bucket": "lealapp-be67a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:469993633816:android:0c7f5072c8942d628d6b6d",
+        "android_client_info": {
+          "package_name": "com.example.lealapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNVAGSr2KdEThLIiHLqvxe_QSCXaVep4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
