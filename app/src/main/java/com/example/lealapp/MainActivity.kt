@@ -17,7 +17,7 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
-    // Firebase Auth. de Autenticação
+    // Firebase Authentication
     private lateinit var auth: FirebaseAuth
     private val db = Firebase.firestore
 
@@ -33,56 +33,55 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // "Cadastra-se"
-        val textView = findViewById<TextView>(R.id.textCadastro)
-        textView.setOnClickListener {
-            val intent = Intent(this, Cadastro::class.java)
+        // "Sign Up"
+        val signUpTextView = findViewById<TextView>(R.id.textSignUp)
+        signUpTextView.setOnClickListener {
+            val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
         }
     }
 
-    //Verifica se o usuario tem login
-    fun logar(view: View) {
-        val email = findViewById<EditText>(R.id.textEmail).text.toString()
-        val senha = findViewById<EditText>(R.id.textSenha).text.toString()
+    // Checks if the user can log in
+    fun login(view: View) {
+        val email = findViewById<EditText>(R.id.editTextEmail).text.toString()
+        val password = findViewById<EditText>(R.id.editTextPassword).text.toString()
 
-        if (email.isNotEmpty() && senha.isNotEmpty()) {
-            auth.signInWithEmailAndPassword(email, senha)
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+            auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val user = auth.currentUser
                         user?.let { current ->
-                            db.collection("usuarios").document(current.uid).get()
+                            db.collection("users").document(current.uid).get()
                                 .addOnSuccessListener { doc ->
                                     if (doc != null && doc.exists() &&
-                                        doc.contains("nome") && doc.contains("altura") && doc.contains("peso") && doc.contains("idade")) {
-                                        val nome = doc.getString("nome") ?: "Usuário"
-                                        val idade = doc.getLong("idade")?.toInt() ?: 0
-                                        val altura = doc.getDouble("altura") ?: 0.0
-                                        val peso = doc.getDouble("peso") ?: 0.0
+                                        doc.contains("name") && doc.contains("height") && doc.contains("weight") && doc.contains("age")) {
+                                        val name = doc.getString("name") ?: getString(R.string.default_user)
+                                        val age = doc.getLong("age")?.toInt() ?: 0
+                                        val height = doc.getDouble("height") ?: 0.0
+                                        val weight = doc.getDouble("weight") ?: 0.0
 
-                                        val intentEx = Intent(this, Exercicios::class.java)
-                                        intentEx.putExtra("nome", nome)
-                                        intentEx.putExtra("idade", idade)
-                                        intentEx.putExtra("altura", altura)
-                                        intentEx.putExtra("peso", peso)
+                                        val intentEx = Intent(this, ExercisesActivity::class.java)
+                                        intentEx.putExtra("name", name)
+                                        intentEx.putExtra("age", age)
+                                        intentEx.putExtra("height", height)
+                                        intentEx.putExtra("weight", weight)
                                         startActivity(intentEx)
                                         finish()
                                     } else {
-                                        // Perfil não completo, vai para Telaprincipal
-                                        val intentTel = Intent(this, Telaprincipal::class.java)
-                                        startActivity(intentTel)
+                                        // Incomplete profile, go to MainScreenActivity
+                                        val intentMain = Intent(this, MainScreenActivity::class.java)
+                                        startActivity(intentMain)
                                         finish()
                                     }
                                 }
                         }
                     } else {
-                        Toast.makeText(this, "Usuário ou senha incorretos!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.incorrect_username_or_password), Toast.LENGTH_LONG).show()
                     }
                 }
         } else {
-            Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
-        }
-
+            Toast.makeText(this, getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
         }
     }
+}

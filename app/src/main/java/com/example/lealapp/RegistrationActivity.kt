@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
-class Cadastro : AppCompatActivity() {
+class RegistrationActivity : AppCompatActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
@@ -22,7 +22,7 @@ class Cadastro : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_cadastro)
+        setContentView(R.layout.activity_registration)
 
         auth = FirebaseAuth.getInstance()
         db = Firebase.firestore
@@ -35,66 +35,66 @@ class Cadastro : AppCompatActivity() {
 
     }
 
-    fun cadastrar(view: android.view.View) {
-        val emailEditText = findViewById<EditText>(R.id.textEmail)
-        val senhaEditText = findViewById<EditText>(R.id.textSenha)
-        val senhaConfirmEditText = findViewById<EditText>(R.id.textSenhaC)
+    fun register(view: android.view.View) {
+        val emailEditText = findViewById<EditText>(R.id.editTextEmail)
+        val passwordEditText = findViewById<EditText>(R.id.editTextPassword)
+        val confirmPasswordEditText = findViewById<EditText>(R.id.editTextConfirmPassword)
 
         val email = emailEditText.text.toString()
-        val senha = senhaEditText.text.toString()
-        val senhaC = senhaConfirmEditText.text.toString()
+        val password = passwordEditText.text.toString()
+        val confirmPassword = confirmPasswordEditText.text.toString()
 
-        // Confirma se as senhas batem
-        if (email.isNotEmpty() && senha.isNotEmpty() && senhaC.isNotEmpty()) {
-            if (senha != senhaC) {
-                Toast.makeText(this, "As senhas não coincidem!", Toast.LENGTH_SHORT).show()
+        // Check if passwords match
+        if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
+            if (password != confirmPassword) {
+                Toast.makeText(this, getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show()
                 return
             }
-            auth.createUserWithEmailAndPassword(email, senha)
+            auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val user = auth.currentUser
                         user?.let { currentUser ->
                             val userData = hashMapOf(
                                 "email" to email,
-                                "nome" to "",
-                                "dataCadastro" to System.currentTimeMillis()
+                                "name" to "",
+                                "registrationDate" to System.currentTimeMillis()
                             )
 
-                            db.collection("usuarios").document(currentUser.uid)
+                            db.collection("users").document(currentUser.uid)
                                 .set(userData)
                                 .addOnSuccessListener {
                                     Toast.makeText(
                                         this,
-                                        "Cadastro realizado com sucesso!",
+                                        getString(R.string.registration_successful),
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    voltarLogin()
+                                    goBackToLogin()
                                 }
                                 .addOnFailureListener { e ->
                                     Toast.makeText(
                                         this,
-                                        "Erro ao salvar dados: ${e.message}",
+                                        getString(R.string.error_saving_data) + ": ${e.message}",
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    voltarLogin()
+                                    goBackToLogin()
                                 }
                         }
                     } else {
                         Toast.makeText(
                             this,
-                            task.exception?.message ?: "Erro ao cadastrar!",
+                            task.exception?.message ?: getString(R.string.registration_error),
                             Toast.LENGTH_LONG
                         ).show()
-                        voltarLogin()
+                        goBackToLogin()
                     }
                 }
         } else {
-            Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.fill_in_all_fields), Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun voltarLogin() {
+    private fun goBackToLogin() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }

@@ -11,10 +11,11 @@ class FullImageActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_full_image)
 
-        val url = intent.getStringExtra("url")
-        val iv = findViewById<android.widget.ImageView>(R.id.ivFull)
-        Glide.with(this).load(url).into(iv)
+        // Get image URL from intent and display it
+        val imageUrl = intent.getStringExtra("url")
+        val imageView = findViewById<android.widget.ImageView>(R.id.ivFull)
+        Glide.with(this).load(imageUrl).into(imageView)
 
-        iv.setOnClickListener { finish() }
+        imageView.setOnClickListener { finish() }
     }
 }
