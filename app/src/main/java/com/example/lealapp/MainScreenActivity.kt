@@ -5,29 +5,27 @@ import android.os.Bundle
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.lealapp.MainScreenViewModel
+import com.example.lealapp.model.UserProfile
 
 class MainScreenActivity : AppCompatActivity() {
 
-    private val auth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
+    private val viewModel: MainScreenViewModel by viewModels()
 
     private lateinit var editName: EditText
     private lateinit var editAge: EditText
     private lateinit var editHeight: EditText
     private lateinit var editWeight: EditText
 
+    // Método chamado ao criar a tela. Inicializa componentes e observa dados do ViewModel.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main_screen)
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -35,30 +33,35 @@ class MainScreenActivity : AppCompatActivity() {
             insets
         }
 
-
         editName = findViewById(R.id.editName)
         editAge = findViewById(R.id.editAge)
         editHeight = findViewById(R.id.editHeight)
-        editWeight  = findViewById(R.id.editWeight)
+        editWeight = findViewById(R.id.editWeight)
 
-        carregarPerfil()
+        observeViewModel()
+        viewModel.loadProfile()
     }
 
-    private fun loadProfile() {
-        auth.currentUser?.let { user ->
-            db.collection("users").document(user.uid).get()
-                .addOnSuccessListener { doc ->
-                    if (doc != null && doc.exists()) {
-                        editName.setText(doc.getString("name") ?: "")
-                        doc.getLong("age")?.let { editAge.setText(it.toString()) }
-                        doc.getDouble("height")?.let { editHeight.setText(it.toString()) }
-                        doc.getDouble("weight")?.let { editWeight.setText(it.toString()) }
-                    }
-                }
+    // Observa as mudanças do perfil e do status de salvamento no ViewModel.
+    private fun observeViewModel() {
+        viewModel.profile.observe(this) { profile ->
+            profile?.let {
+                editName.setText(it.name)
+                editAge.setText(it.age.toString())
+                editHeight.setText(it.height.toString())
+                editWeight.setText(it.weight.toString())
+            }
+        }
+        viewModel.saveStatus.observe(this) { saved ->
+            if (saved) {
+                navigateToExercises()
+            } else {
+                Toast.makeText(this, getString(R.string.error_saving_data), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    // Função chamada pelo botão
+    // Salva o perfil do usuário ao clicar no botão.
     fun saveProfileButton(view: android.view.View) {
         val name = editName.text.toString()
         val age = editAge.text.toString().toIntOrNull()
@@ -66,43 +69,25 @@ class MainScreenActivity : AppCompatActivity() {
         val weight = editWeight.text.toString().toDoubleOrNull()
 
         if (name.isNotEmpty() && age != null && height != null && weight != null) {
-            val intent = Intent(this, ExercisesActivity::class.java)
-            intent.putExtra("name", name)
-            intent.putExtra("age", age)
-            intent.putExtra("height", height)
-            intent.putExtra("weight", weight)
-            startActivity(intent)
-            finish()
+            val profile = UserProfile(name, age, height, weight)
+            viewModel.saveProfile(profile)
         } else {
             Toast.makeText(this, getString(R.string.fill_in_all_fields_correctly), Toast.LENGTH_SHORT).show()
         }
     }
 
-
-    private fun saveProfile(
-        name: String,
-        age: Int,
-        height: Double,
-        weight: Double,
-        onDone: () -> Unit
-    ) {
-        auth.currentUser?.let { user ->
-            val data = hashMapOf(
-                "name" to name,
-                "age" to age,
-                "height" to height,
-                "weight" to weight
-            )
-            db.collection("users").document(user.uid)
-                .set(data, SetOptions.merge())
-                .addOnSuccessListener { onDone() }
-                .addOnFailureListener {
-                    Toast.makeText(this, getString(R.string.error_saving_data), Toast.LENGTH_SHORT).show()
-                    onDone() // even on error, proceed to next screen
-                }
-        } ?: run {
-            // User not logged in, just proceed
-            onDone()
+    // Navega para a tela de exercícios, passando os dados do perfil.
+    private fun navigateToExercises() {
+        val intent = Intent(this, Exercicios::class.java).apply {
+            val ageSafe = editAge.text.toString().toIntOrNull() ?: 0
+            val heightSafe = editHeight.text.toString().toDoubleOrNull() ?: 0.0
+            val weightSafe = editWeight.text.toString().toDoubleOrNull() ?: 0.0
+            putExtra("name", editName.text.toString())
+            putExtra("age", ageSafe)
+            putExtra("height", heightSafe)
+            putExtra("weight", weightSafe)
         }
+        startActivity(intent)
+        finish()
     }
 }

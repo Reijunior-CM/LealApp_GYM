@@ -44,7 +44,7 @@ class RegistrationActivity : AppCompatActivity() {
         val password = passwordEditText.text.toString()
         val confirmPassword = confirmPasswordEditText.text.toString()
 
-        // Check if passwords match
+        // verifica se todos os campos foram preenchidos
         if (email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()) {
             if (password != confirmPassword) {
                 Toast.makeText(this, getString(R.string.passwords_do_not_match), Toast.LENGTH_SHORT).show()

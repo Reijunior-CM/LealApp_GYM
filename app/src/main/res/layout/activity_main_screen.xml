@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:text="@string/user_profile"
+        android:text="Perfil de Usuario"
         android:textColor="#FFFDFD"
         android:textSize="28sp"
         android:textStyle="bold"
@@ -59,16 +59,17 @@
                 android:textColor="#2E2A2A"
                 android:textStyle="bold"
                 android:textSize="16sp" />
+
             <EditText
                 android:id="@+id/editName"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginBottom="12dp"
                 android:background="@android:drawable/editbox_background_normal"
-                android:hint="@string/enter_your_name"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
+                android:hint="Nome do usuario"
                 android:padding="10dp"
-                android:layout_marginBottom="12dp" />
+                android:textColor="#000000"
+                android:textColorHint="#888888" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -77,22 +78,23 @@
                 android:textColor="#2E2A2A"
                 android:textStyle="bold"
                 android:textSize="16sp" />
+
             <EditText
                 android:id="@+id/editAge"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginBottom="12dp"
                 android:background="@android:drawable/editbox_background_normal"
-                android:hint="@string/enter_your_age"
+                android:hint="Digite sua idade"
                 android:inputType="number"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
                 android:padding="10dp"
-                android:layout_marginBottom="12dp" />
+                android:textColor="#000000"
+                android:textColorHint="#888888" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/height_example"
+                android:text="Altura(Ex: 170)"
                 android:textColor="#2E2A2A"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -103,7 +105,7 @@
                 android:layout_height="50dp"
                 android:layout_marginBottom="12dp"
                 android:background="@android:drawable/editbox_background_normal"
-                android:hint="@string/enter_your_height"
+                android:hint="Altura ex:170"
                 android:inputType="numberDecimal"
                 android:padding="10dp"
                 android:textColor="#000000"
@@ -112,21 +114,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/weight_kg"
+                android:text="Peso"
                 android:textColor="#2E2A2A"
-                android:textStyle="bold"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <EditText
                 android:id="@+id/editWeight"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:layout_marginBottom="18dp"
                 android:background="@android:drawable/editbox_background_normal"
-                android:hint="@string/enter_your_weight"
+                android:hint="Peso"
                 android:inputType="numberDecimal"
-                android:textColor="#000000"
-                android:textColorHint="#888888"
                 android:padding="10dp"
-                android:layout_marginBottom="18dp" />
+                android:textColor="#000000"
+                android:textColorHint="#888888" />
 
             <Button
                 android:id="@+id/btnSalvarPerfil"
@@ -135,7 +138,7 @@
                 android:background="@drawable/rounded_button"
                 android:elevation="4dp"
                 android:onClick="saveProfileButton"
-                android:text="@string/save"
+                android:text="Salvar"
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />

@@ -17,10 +17,11 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
-    // Firebase Authentication
+    // Autenticação do Firebase
     private lateinit var auth: FirebaseAuth
     private val db = Firebase.firestore
 
+    // Método chamado ao criar a tela de login
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // "Sign Up"
+        // Verificar o usuario logado
         val signUpTextView = findViewById<TextView>(R.id.textSignUp)
         signUpTextView.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Checks if the user can log in
+    // Realiza o login do usuário
     fun login(view: View) {
         val email = findViewById<EditText>(R.id.editTextEmail).text.toString()
         val password = findViewById<EditText>(R.id.editTextPassword).text.toString()
@@ -55,13 +56,16 @@ class MainActivity : AppCompatActivity() {
                             db.collection("users").document(current.uid).get()
                                 .addOnSuccessListener { doc ->
                                     if (doc != null && doc.exists() &&
-                                        doc.contains("name") && doc.contains("height") && doc.contains("weight") && doc.contains("age")) {
-                                        val name = doc.getString("name") ?: getString(R.string.default_user)
+                                        doc.contains("name") && doc.contains("height")
+                                        && doc.contains("weight") && doc.contains("age")
+                                    ) {
+                                        val name = doc.getString("name")
+                                            ?: getString(R.string.default_user)
                                         val age = doc.getLong("age")?.toInt() ?: 0
                                         val height = doc.getDouble("height") ?: 0.0
                                         val weight = doc.getDouble("weight") ?: 0.0
 
-                                        val intentEx = Intent(this, ExercisesActivity::class.java)
+                                        val intentEx = Intent(this, Exercicios::class.java)
                                         intentEx.putExtra("name", name)
                                         intentEx.putExtra("age", age)
                                         intentEx.putExtra("height", height)
@@ -69,15 +73,20 @@ class MainActivity : AppCompatActivity() {
                                         startActivity(intentEx)
                                         finish()
                                     } else {
-                                        // Incomplete profile, go to MainScreenActivity
-                                        val intentMain = Intent(this, MainScreenActivity::class.java)
+                                        // Perfil incompleto, vai para a tela de cadastro de perfil
+                                        val intentMain =
+                                            Intent(this, MainScreenActivity::class.java)
                                         startActivity(intentMain)
                                         finish()
                                     }
                                 }
                         }
                     } else {
-                        Toast.makeText(this, getString(R.string.incorrect_username_or_password), Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.incorrect_username_or_password),
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
         } else {
