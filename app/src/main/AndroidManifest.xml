@@ -31,12 +31,7 @@
         <activity
             android:name=".Exercicios"
             android:exported="false" />
-        <activity
-            android:name=".Telaprincipal"
-            android:exported="false" />
-        <activity
-            android:name=".Cadastro"
-            android:exported="false" /> <!-- Carregamento = Tela inicial (Splash/Loading) -->
+
         <activity
             android:name=".Carregamento"
             android:exported="true"
